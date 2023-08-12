@@ -25,6 +25,12 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+// import Firebase from 'react-native-firebase';
+// import {firebase} from '@react-native-firebase/database';
+// import database from '@react-native-firebase/database';
+// import firestore from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -56,6 +62,59 @@ function Section({children, title}: SectionProps): JSX.Element {
 }
 
 function App(): JSX.Element {
+  firestore()
+    .collection('naegi')
+    .onSnapshot(
+      QuerySnapshot => {
+        if (QuerySnapshot.size > 0) {
+          QuerySnapshot.forEach(documentSnapshot => {
+            console.log(documentSnapshot.data());
+          });
+        }
+      },
+      error => {
+        console.log(error);
+      },
+    );
+
+  // const reference = firebase
+  //   .app()
+  //   .database(
+  //     'https://naegitest1-default-rtdb.asia-southeast1.firebasedatabase.app/',
+  //   )
+  //   .ref('/List');
+  // console.log(reference);
+  // console.log(database.ServerValue);
+  // const reference = database(
+  //   'https://naegitest1-default-rtdb.asia-southeast1.firebasedatabase.app/',
+  //   ).ref('/List');
+  // console.log(reference);
+
+  // const database = firebase
+  //   .app()
+  //   .database(
+  //     'https://naegitest1-default-rtdb.asia-southeast1.firebasedatabase.app/',
+  //   );
+
+  // データベースのインスタンスを作成
+  // let db = Firebase.database();
+  // db.ref('List')
+  //   .on('value', snapshot => {
+  //     console.log(snapshot.val());
+  //   })
+  //   .bind(db);
+
+  // db.ref('List')
+  //   .set({
+  //     title: 'aaaa',
+  //   })
+  //   .then(() => {
+  //     console.log('update ok');
+  //   })
+  //   .catch(error => {
+  //     console.log(error);
+  //   });
+
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
