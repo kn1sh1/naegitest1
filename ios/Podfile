@@ -27,8 +27,8 @@ end
 
 target 'naegitest1' do
   # use_frameworks!
-  use_frameworks! :linkage => :static
-  $RNFirebaseAsStaticFramework = true
+  # use_frameworks! :linkage => :static
+  # $RNFirebaseAsStaticFramework = true
   pod 'Firebase', :modular_headers => true
   pod 'FirebaseCore', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true

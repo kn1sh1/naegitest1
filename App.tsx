@@ -4,174 +4,72 @@
  *
  * @format
  */
-
+import 'react-native-gesture-handler';
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {PaperProvider} from 'react-native-paper';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import ListScreen from './src/components/ListScreen';
+import DetailScreen from './src/components/DetileScreen';
 
-// import Firebase from 'react-native-firebase';
-// import {firebase} from '@react-native-firebase/database';
-// import database from '@react-native-firebase/database';
-// import firestore from '@react-native-firebase/firestore';
-import firestore from '@react-native-firebase/firestore';
+const Stack = createStackNavigator();
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+export default function App(): JSX.Element {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <PaperProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="List">
+          <Stack.Screen
+            name="List"
+            component={ListScreen}
+            options={{
+              title: '苗木管理',
+            }}
+          />
+          <Stack.Screen
+            name="Detile"
+            component={DetailScreen}
+            options={{
+              title: 'test',
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
+    // <View style={styles.Container}>
+    //   <Text>Hello ListScreen</Text>
+    // </View>
   );
 }
 
-function App(): JSX.Element {
-  firestore()
-    .collection('naegi')
-    .onSnapshot(
-      QuerySnapshot => {
-        if (QuerySnapshot.size > 0) {
-          QuerySnapshot.forEach(documentSnapshot => {
-            console.log(documentSnapshot.data());
-          });
-        }
-      },
-      error => {
-        console.log(error);
-      },
-    );
+// const styles = StyleSheet.create({
+//   Container: {
+//     flex: 1,
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   },
+// });
 
-  // const reference = firebase
-  //   .app()
-  //   .database(
-  //     'https://naegitest1-default-rtdb.asia-southeast1.firebasedatabase.app/',
-  //   )
-  //   .ref('/List');
-  // console.log(reference);
-  // console.log(database.ServerValue);
-  // const reference = database(
-  //   'https://naegitest1-default-rtdb.asia-southeast1.firebasedatabase.app/',
-  //   ).ref('/List');
-  // console.log(reference);
-
-  // const database = firebase
-  //   .app()
-  //   .database(
-  //     'https://naegitest1-default-rtdb.asia-southeast1.firebasedatabase.app/',
-  //   );
-
-  // データベースのインスタンスを作成
-  // let db = Firebase.database();
-  // db.ref('List')
-  //   .on('value', snapshot => {
-  //     console.log(snapshot.val());
-  //   })
-  //   .bind(db);
-
-  // db.ref('List')
-  //   .set({
-  //     title: 'aaaa',
-  //   })
-  //   .then(() => {
-  //     console.log('update ok');
-  //   })
-  //   .catch(error => {
-  //     console.log(error);
-  //   });
-
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
-export default App;
+// useEffect(() => {
+//   const initialize = async () => {
+//     firestore()
+//       .collection('naegi')
+//       .onSnapshot(
+//         QuerySnapshot => {
+//           if (QuerySnapshot.size > 0) {
+//             QuerySnapshot.forEach(documentSnapshot => {
+//               console.log(documentSnapshot.data());
+//               console.log(Object.keys(documentSnapshot.data()));
+//               Object.assign(documentSnapshot.data());
+//               b.push(a);
+//               console.log('bcount2 is ' + b.length);
+//             });
+//           }
+//         },
+//         error => {
+//           console.log(error);
+//         },
+//       );
+//   };
+// });
