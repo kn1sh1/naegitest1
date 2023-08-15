@@ -11,7 +11,6 @@ export default function ListScreen(): JSX.Element {
   const [naegis, setNaegis] = useState(Array<Naegi>);
   useIsFocused();
 
-  console.log('ここからスタート2');
   useEffect(() => {
     console.log('useEffect');
 
@@ -38,46 +37,6 @@ export default function ListScreen(): JSX.Element {
     const unsubscribe = navigation.addListener('focus', initialize);
     return unsubscribe;
   }, [naegis, navigation]);
-  // useEffect(() => {
-  //   console.log('useEffectここきてる？');
-
-  // const initialize = async () => {
-  //   let n: Naegi = {
-  //     id: 0,
-  //     name: '',
-  //     count: '',
-  //   };
-  //   let list: Array<Naegi> = [];
-  //   console.log('initializeここきてる？');
-  //   console.log('naegisの中身:' + naegis);
-
-  //   const db = firestore().collection('naegi');
-  //   db.onSnapshot(
-  //     query => {
-  //       if (query.size > 0) {
-  //         query.forEach(doc => {
-  //           n = Object.assign(doc.data());
-  //           // if (naegis.find(v => v.id !== n.id)) {
-  //           if (naegis.filter(v => v.id === n.id).length === 0) {
-  //             list.push(n);
-  //           }
-  //         });
-  //       }
-  //       // console.log('リストの中身：' + list.length);
-  //       // setNaegis(new Array<Naegi>());
-  //       // naegis.splice(0);
-  //       // console.log('listの中身:' + list);
-  //       setNaegis(list);
-  //       // console.log(naegis);
-  //     },
-  //     error => {
-  //       console.log(error);
-  //     },
-  //   );
-  //   };
-  //   const unsubscribe = navigation.addListener('focus', initialize);
-  //   return unsubscribe;
-  // }, [naegis, navigation]);
 
   const onPressAdd = () => {
     navigation.navigate('Detile', {AUD: AUD.add});
@@ -93,9 +52,9 @@ export default function ListScreen(): JSX.Element {
           return (
             <View style={styles.memoContainer}>
               {/* TODO itemを外で使用しないとListItem表示されず？ */}
-              <Text style={styles.memoTitle}>{item.name}</Text>
+              {/* <Text style={styles.memoTitle}>{item.name}</Text> */}
               <List.Item
-                title={''}
+                title={item.name}
                 style={styles.list}
                 titleNumberOfLines={1}
                 description={`${item.count}株`}
