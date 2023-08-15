@@ -15,14 +15,11 @@ export default function DetileScreen(): JSX.Element {
       const getNewNaegiId = async (): Promise<number> => {
         let db = firestore().collection('naegi');
         let b = await db.countFromServer().get();
-        return b.data().count;
+        return b.data().count + 1;
       };
-      getNewNaegiId().then((newId: number) => {
-        console.log('asyncの結果=' + a);
-        newId++;
-        firestore()
-          .collection('naegi')
-          .doc(newId.toString())
+      async function addNaegi(newId: number) {
+        let newDoc = firestore().collection('naegi').doc(newId.toString());
+        await newDoc
           .set({
             id: newId,
             name: name,
@@ -31,6 +28,12 @@ export default function DetileScreen(): JSX.Element {
           .then(() => {
             console.log('User added!');
           });
+      }
+      getNewNaegiId().then((newId: number) => {
+        addNaegi(newId).then(() => {
+          // TODO ここでやらないと新規が一覧に表示されない（一覧表示後、登録完了してしまう。）
+          navigation.goBack();
+        });
       });
     } else if (route.params.AUD === AUD.upd) {
       console.log('upd');
@@ -47,17 +50,10 @@ export default function DetileScreen(): JSX.Element {
         .then(() => {
           console.log('User updated!');
         });
+      navigation.goBack();
     } else {
       console.log('del');
     }
-    // firestore()
-    //   .collection('naegi')
-    //   .doc('j0OFhPetTzEKfvHZdwr8')
-    //   .delete()
-    //   .then(() => {
-    //     console.log('User added!');
-    //   });
-    navigation.goBack();
   };
 
   // TODO なにこのきもい書き方 useStateは初期化時に設定しないとなぜか無限ループに入る？

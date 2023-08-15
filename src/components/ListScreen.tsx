@@ -13,43 +13,76 @@ export default function ListScreen(): JSX.Element {
 
   console.log('ここからスタート2');
   useEffect(() => {
-    console.log('useEffectここきてる？');
+    console.log('useEffect');
+
     const initialize = async () => {
+      console.log('initialize');
       let n: Naegi = {
         id: 0,
         name: '',
         count: '',
       };
-      var list: Array<Naegi> = [];
-      console.log('initializeここきてる？');
-      setNaegis([]);
-
-      firestore()
-        .collection('naegi')
-        .onSnapshot(
-          QuerySnapshot => {
-            if (QuerySnapshot.size > 0) {
-              QuerySnapshot.forEach(documentSnapshot => {
-                n = Object.assign(documentSnapshot.data());
-                list.push(n);
-              });
-            }
-            console.log('リストの中身：' + list.length);
-            setNaegis(list);
-          },
-          error => {
-            console.log(error);
-          },
-        );
+      let list: Array<Naegi> = [];
+      const db = firestore().collection('naegi');
+      let docs = (await db.get()).docs;
+      console.log('length' + docs.length);
+      if (docs.length > 0) {
+        docs.forEach(doc => {
+          n = Object.assign(doc.data());
+          list.push(n);
+        });
+        naegis.splice(0);
+        setNaegis(list);
+      }
     };
     const unsubscribe = navigation.addListener('focus', initialize);
     return unsubscribe;
-  }, [navigation]);
+  }, [naegis, navigation]);
+  // useEffect(() => {
+  //   console.log('useEffectここきてる？');
+
+  // const initialize = async () => {
+  //   let n: Naegi = {
+  //     id: 0,
+  //     name: '',
+  //     count: '',
+  //   };
+  //   let list: Array<Naegi> = [];
+  //   console.log('initializeここきてる？');
+  //   console.log('naegisの中身:' + naegis);
+
+  //   const db = firestore().collection('naegi');
+  //   db.onSnapshot(
+  //     query => {
+  //       if (query.size > 0) {
+  //         query.forEach(doc => {
+  //           n = Object.assign(doc.data());
+  //           // if (naegis.find(v => v.id !== n.id)) {
+  //           if (naegis.filter(v => v.id === n.id).length === 0) {
+  //             list.push(n);
+  //           }
+  //         });
+  //       }
+  //       // console.log('リストの中身：' + list.length);
+  //       // setNaegis(new Array<Naegi>());
+  //       // naegis.splice(0);
+  //       // console.log('listの中身:' + list);
+  //       setNaegis(list);
+  //       // console.log(naegis);
+  //     },
+  //     error => {
+  //       console.log(error);
+  //     },
+  //   );
+  //   };
+  //   const unsubscribe = navigation.addListener('focus', initialize);
+  //   return unsubscribe;
+  // }, [naegis, navigation]);
 
   const onPressAdd = () => {
     navigation.navigate('Detile', {AUD: AUD.add});
   };
-  useIsFocused();
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -67,7 +100,9 @@ export default function ListScreen(): JSX.Element {
                 titleNumberOfLines={1}
                 description={`${item.count}株`}
                 descriptionStyle={{textAlign: 'right'}}
-                onLongPress={() => navigation.navigate('Detile', {item: item, AUD: AUD.upd})}
+                onLongPress={() =>
+                  navigation.navigate('Detile', {item: item, AUD: AUD.upd})
+                }
               />
             </View>
           );
@@ -114,11 +149,3 @@ const styles = StyleSheet.create({
     // marginTop: 8
   },
 });
-
-// const styles = StyleSheet.create({
-//   Container: {
-//     flex: 1,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
