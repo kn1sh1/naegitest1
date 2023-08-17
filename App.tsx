@@ -12,6 +12,7 @@ import {PaperProvider} from 'react-native-paper';
 
 import ListScreen from './src/components/ListScreen';
 import DetailScreen from './src/components/DetileScreen';
+import CountScreen from './src/components/CountScreen';
 
 const Stack = createStackNavigator();
 
@@ -24,14 +25,21 @@ export default function App(): JSX.Element {
             name="List"
             component={ListScreen}
             options={{
-              title: '苗木管理',
+              title: '一覧',
             }}
           />
           <Stack.Screen
             name="Detile"
             component={DetailScreen}
             options={{
-              title: 'test',
+              title: '',
+            }}
+          />
+          <Stack.Screen
+            name="Count"
+            component={CountScreen}
+            options={{
+              title: '',
             }}
           />
         </Stack.Navigator>

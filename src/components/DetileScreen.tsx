@@ -31,15 +31,12 @@ export default function DetileScreen(): JSX.Element {
       }
       getNewNaegiId().then((newId: number) => {
         addNaegi(newId).then(() => {
-          // TODO ここでやらないと新規が一覧に表示されない（一覧表示後、登録完了してしまう。）
+          // TODO ここでgoBackしないと新規が一覧に表示されない（一覧表示後、登録が完了するため）
           navigation.goBack();
         });
       });
     } else if (route.params.AUD === AUD.upd) {
       console.log('upd');
-      console.log(route.params.item.id);
-      console.log(name);
-      console.log(count);
       firestore()
         .collection('naegi')
         .doc(route.params.item.id.toString())
@@ -75,20 +72,22 @@ export default function DetileScreen(): JSX.Element {
     <KeyboardAvoidingView style={styles.container}>
       <TextInput
         style={{marginBottom: 16}}
-        mode="outlined"
+        // placeholder="樹種名"
         placeholder="樹種名"
-        multiline
+        label="樹種名"
         onChangeText={text => setName(text)}
         value={name}
       />
       <TextInput
         style={{marginBottom: 16}}
-        mode="outlined"
         placeholder="株数"
+        label="株数"
         onChangeText={text => setCount(text)}
         value={count}
       />
-      <Button mode="contained" onPress={onPressSave} />
+      <Button icon="check" mode="text" onPress={onPressSave}>
+        登録
+      </Button>
     </KeyboardAvoidingView>
   );
 }
