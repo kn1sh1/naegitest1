@@ -28,6 +28,45 @@ export default function DetileScreen(): JSX.Element {
           .then(() => {
             console.log('User added!');
           });
+        // TODO うまく書こう
+        // 過去４年間のデータを表示したいので-2（今年、１年前、２年前、３年前）
+        // TODO ４月から次の年度にする？芽を出した時期なら４月からがいいかも
+        // let before3nen = new Date().getFullYear() - 3;
+        // let nendo123 = parseInt(before3nen.toString(), 10);
+        // const keynendo = {nendo1, nendo1 + 1, nendo1 + 2, nendo1 + 3};
+        let nendo = new Date().getFullYear();
+        let nendomin1 = nendo - 1;
+        let nendomin2 = nendo - 2;
+        let nendomin3 = nendo - 3;
+        // let nendoList = {nendo, nendomin1, nendomin2, nendomin3};
+        await newDoc.collection('count').doc(nendo.toString()).set({
+          cc150: 0,
+          cc300: 0,
+          c24: 0,
+          c40: 0,
+          pot: 0,
+        });
+        await newDoc.collection('count').doc(nendomin1.toString()).set({
+          cc150: 0,
+          cc300: 0,
+          c24: 0,
+          c40: 0,
+          pot: 0,
+        });
+        await newDoc.collection('count').doc(nendomin2.toString()).set({
+          cc150: 0,
+          cc300: 0,
+          c24: 0,
+          c40: 0,
+          pot: 0,
+        });
+        await newDoc.collection('count').doc(nendomin3.toString()).set({
+          cc150: 0,
+          cc300: 0,
+          c24: 0,
+          c40: 0,
+          pot: 0,
+        });
       }
       getNewNaegiId().then((newId: number) => {
         addNaegi(newId).then(() => {
@@ -54,6 +93,7 @@ export default function DetileScreen(): JSX.Element {
   };
 
   // TODO なにこのきもい書き方 useStateは初期化時に設定しないとなぜか無限ループに入る？
+  // TODO firestoreからのデータ取得に切り替えるため、そのうち大丈夫になるはず
   const [name, setName] = useState(isAdd ? '' : route.params.item.name);
   const [count, setCount] = useState(isAdd ? '' : route.params.item.count);
   var a: number = 0;
@@ -73,17 +113,17 @@ export default function DetileScreen(): JSX.Element {
       <TextInput
         style={{marginBottom: 16}}
         // placeholder="樹種名"
-        placeholder="樹種名"
         label="樹種名"
         onChangeText={text => setName(text)}
         value={name}
       />
       <TextInput
         style={{marginBottom: 16}}
-        placeholder="株数"
         label="株数"
         onChangeText={text => setCount(text)}
         value={count}
+        multiline
+        numberOfLines={5}
       />
       <Button icon="check" mode="text" onPress={onPressSave}>
         登録
