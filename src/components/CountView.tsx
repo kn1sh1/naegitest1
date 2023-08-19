@@ -23,7 +23,6 @@ const CountView: React.FunctionComponent<{
   const [pot, setPot] = useState('');
   const [total, setTotal] = useState(0);
   const [pretotal, setPreTotal] = useState(0);
-//   const [at, setAt] = useState(0);
 
   useEffect(() => {
     console.log('useEffect2');
@@ -62,7 +61,7 @@ const CountView: React.FunctionComponent<{
       <Text style={styles.title}>{item.key}</Text>
       <View style={styles.cardcon}>
         <TextInput
-          style={{paddingLeft: 0, width: 100}}
+          style={{paddingLeft: 0, width: 100, textAlign: 'right'}}
           keyboardType="number-pad"
           label="ポット"
           maxLength={5}
@@ -77,24 +76,13 @@ const CountView: React.FunctionComponent<{
             // TODO なぜitemだけで処理できないのか？useStateが関係ある？
             item.pot = parseInt(t, 10);
           }}
-          onFocus={() => {
-            // TODO あんまりコロコロ値変えるのはバグの元やね・・・
-            // setPrepot(pot);
-          }}
-          onEndEditing={() => {
-            // let diff = parseInt(pot, 10) - parseInt(prepot, 10);
-            // item.total += diff;
-            // setTotal(total + diff);
-            // allTotal.alltotal += diff;
-            // console.log('allTotal = ' + allTotal.alltotal);
-          }}
         />
         <Text>株</Text>
       </View>
       <View style={styles.cardcon}>
         <Text>40穴</Text>
         <TextInput
-          style={{paddingLeft: 0, width: 100}}
+          style={{paddingLeft: 0, width: 100, textAlign: 'right'}}
           keyboardType="number-pad"
           label="コンテナ"
           maxLength={5}
@@ -132,7 +120,7 @@ const CountView: React.FunctionComponent<{
           }}
         />
         <TextInput
-          style={{paddingLeft: 0, width: 100}}
+          style={{paddingLeft: 0, width: 100, textAlign: 'right'}}
           keyboardType="number-pad"
           label="150cc"
           maxLength={5}
@@ -163,7 +151,7 @@ const CountView: React.FunctionComponent<{
       <View style={styles.cardcon}>
         <Text>24穴</Text>
         <TextInput
-          style={{paddingLeft: 0, width: 100}}
+          style={{paddingLeft: 0, width: 100, textAlign: 'right'}}
           keyboardType="number-pad"
           label="コンテナ"
           maxLength={5}
@@ -191,7 +179,7 @@ const CountView: React.FunctionComponent<{
           }}
         />
         <TextInput
-          style={{paddingLeft: 0, width: 100}}
+          style={{paddingLeft: 0, width: 100, textAlign: 'right'}}
           keyboardType="number-pad"
           label="300cc"
           maxLength={5}
@@ -224,19 +212,13 @@ const CountView: React.FunctionComponent<{
         <Text>{total}</Text>
         <Text>株</Text>
       </View>
+      <Divider bold horizontalInset />
       <View style={styles.total}>
         <Text>総計</Text>
         <Text>{alltotal.alltotal}</Text>
         <Text>株</Text>
       </View>
       <Divider />
-
-      <Divider />
-      {/* <View style={styles.total}>
-        <Text>総計</Text>
-        <Text>{allTotal}</Text>
-        <Text>株</Text>
-      </View> */}
     </PaperProvider>
   );
 };
@@ -278,6 +260,7 @@ const styles = StyleSheet.create({
   total: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-end',
   },
 });
 

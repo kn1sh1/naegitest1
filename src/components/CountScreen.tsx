@@ -33,8 +33,48 @@ export default function CountScreen(): JSX.Element {
   });
 
   const onPressSave = () => {
+    // TODO 新しい年度になった時は、新規の場合もありうるということで。。。
+    console.log('upd');
+    console.log('alltotal is ' + alltotal.alltotal);
+    // TODO 総件数更新 本当はnaegiドキュメントで持つべきではない？
+    // TODO できれば子コレクションの集計で一覧にも表示させたい
+    updAllTotal();
+    counts.forEach(c => {
+      updCount(c);
+    });
     navigation.goBack();
   };
+
+  async function updAllTotal() {
+    await firestore()
+      .collection('naegi')
+      .doc(route.params.sid.toString())
+      .update({
+        count: alltotal.alltotal,
+      })
+      .then(() => {
+        console.log('User updated!');
+      });
+  }
+
+  async function updCount(c: Count) {
+    console.log('c is ' + c.key);
+    await firestore()
+      .collection('naegi')
+      .doc(route.params.sid.toString())
+      .collection('count')
+      .doc(c.key)
+      .update({
+        cc150: c.cc150,
+        cc300: c.cc300,
+        c24: c.c24,
+        c40: c.c40,
+        pot: c.pot,
+      })
+      .then(() => {
+        console.log('User updated!');
+      });
+  }
 
   // TODO 本当はこんなファンクション作りたくない・・・
   // TODO parseIntしたくない

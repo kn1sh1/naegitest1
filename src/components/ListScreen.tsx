@@ -30,7 +30,7 @@ export default function ListScreen(): JSX.Element {
   const [sname, setSname] = useState('');
 
   useEffect(() => {
-    console.log('useEffect');
+    console.log('ListScreen useEffect');
 
     const initialize = async () => {
       console.log('initialize');
@@ -64,97 +64,99 @@ export default function ListScreen(): JSX.Element {
     navigation.navigate('Detile', {item: item, AUD: AUD.upd});
   };
 
-  const onPressModalButton = (item: Naegi) => {
-    setSid(item.id);
-    setSname(item.name);
+  function p(b: number): number {
+    return parseInt(b.toString(), 10);
+  }
+
+  async function initializeModal(id: string) {
+    console.log('count initialize');
+    let c: Count;
+    // TODO 表示対象ではないカウント
+    let c2: Count = {
+      cc150: 0,
+      cc300: 0,
+      c24: 0,
+      c40: 0,
+      pot: 0,
+      key: '上記以外',
+      total: 0,
+    };
+    let total: Count = {
+      cc150: 0,
+      cc300: 0,
+      c24: 0,
+      c40: 0,
+      pot: 0,
+      key: '総計',
+      total: 0,
+    };
+    let list: Array<Count> = [];
+    // let nendo: number = DateTime.Today.AddMonths(-3).Year;
+    // 過去３年間のデータを表示したいので-2（今年、１年前、２年前）
+    // let nendo = new Date().setFullYear(-2);
+    // TODO ４月から次の年度にする？芽を出した時期なら４月からがいいかも
+    let nendo = new Date().getFullYear() - 2;
+    let keynendo: number;
+    console.log('nendo = ' + nendo);
+
+    counts.splice(0);
+
+    await firestore()
+      .collection('naegi')
+      .doc(id)
+      .collection('count')
+      .get()
+      .then(docs => {
+        if (docs.empty === false) {
+          docs.forEach(doc => {
+            c = Object.assign(doc.data());
+            c.key = doc.id;
+            c.total = p(c.cc150) + p(c.cc300) + p(c.pot);
+
+            total.cc150 = p(c.cc150) + p(total.cc150);
+            total.cc300 = p(c.cc300) + p(total.cc300);
+            total.pot = p(c.pot) + p(total.pot);
+            total.total = p(c.total) + p(total.total);
+
+            console.log('a' + parseInt(c.key, 10));
+            if (c.key.endsWith("'")) {
+              // TODO 2100年になったら修正
+              // TODO データの持ち方次第でこのソース必要なし（2023?23'?どう表記するかだけ）
+              keynendo = parseInt('20' + c.key.substring(0, 2), 10);
+            } else {
+              keynendo = parseInt(c.key, 10);
+            }
+            if (nendo <= keynendo) {
+              list.push(c);
+            } else {
+              console.log(c.key);
+              c2.cc150 = p(c.cc150) + p(c2.cc150);
+              c2.cc300 = p(c.cc300) + p(c2.cc300);
+              c2.pot = p(c.pot) + p(c2.pot);
+              c2.total = p(c.total) + p(c2.total);
+            }
+          });
+          // TODO たまたまうまくいってるだけ、本当はfirestoreにorderbyさせる
+          list.reverse();
+          if (c2.cc150 !== 0 || c2.cc300 !== 0 || c2.total !== 0) {
+            list.push(c2);
+          }
+          list.push(total);
+          console.log(list);
+          setCounts(list);
+        }
+      });
+  }
+
+  const onPressModalButton = (id: string, name: string) => {
+    setSid(parseInt(id, 10));
+    setSname(name);
 
     // TODO 本当はこんなファンクション作りたくない・・・
     // TODO parseIntしたくない
-    // TODO この書き方嘘やろ・・・
-    function p(b: number): number {
-      return parseInt(b.toString(), 10);
-    }
+    // TODO この書き方嘘やろ・・
 
-    async function initialize() {
-      console.log('count initialize');
-      let c: Count;
-      // TODO 表示対象ではないカウント
-      let c2: Count = {
-        cc150: 0,
-        cc300: 0,
-        c24: 0,
-        c40: 0,
-        pot: 0,
-        key: '上記以外',
-        total: 0,
-      };
-      let total: Count = {
-        cc150: 0,
-        cc300: 0,
-        c24: 0,
-        c40: 0,
-        pot: 0,
-        key: '合計',
-        total: 0,
-      };
-      let list: Array<Count> = [];
-      // let nendo: number = DateTime.Today.AddMonths(-3).Year;
-      // 過去３年間のデータを表示したいので-2（今年、１年前、２年前）
-      // let nendo = new Date().setFullYear(-2);
-      // TODO ４月から次の年度にする？芽を出した時期なら４月からがいいかも
-      let nendo = new Date().getFullYear() - 2;
-      let keynendo: number;
-      console.log('nendo = ' + nendo);
-
-      counts.splice(0);
-
-      await firestore()
-        .collection('naegi')
-        .doc(item.id.toString())
-        .collection('count')
-        .get()
-        .then(docs => {
-          if (docs.empty === false) {
-            docs.forEach(doc => {
-              c = Object.assign(doc.data());
-              c.key = doc.id;
-              c.total = p(c.cc150) + p(c.cc300) + p(c.pot);
-
-              total.cc150 = p(c.cc150) + p(total.cc150);
-              total.cc300 = p(c.cc300) + p(total.cc300);
-              total.pot = p(c.pot) + p(total.pot);
-              total.total = p(c.total) + p(total.total);
-
-              console.log('a' + parseInt(c.key, 10));
-              if (c.key.endsWith("'")) {
-                // TODO 2100年になったら修正
-                // TODO データの持ち方次第でこのソース必要なし（2023?23'?どう表記するかだけ）
-                keynendo = parseInt('20' + c.key.substring(0, 2), 10);
-              } else {
-                keynendo = parseInt(c.key, 10);
-              }
-              if (nendo <= keynendo) {
-                list.push(c);
-              } else {
-                console.log(c.key);
-                c2.cc150 = p(c.cc150) + p(c2.cc150);
-                c2.cc300 = p(c.cc300) + p(c2.cc300);
-                c2.pot = p(c.pot) + p(c2.pot);
-                c2.total = p(c.total) + p(c2.total);
-              }
-            });
-            // TODO たまたまうまくいってるだけ、本当はfirestoreにorderbyさせる
-            list.reverse();
-            if (c2.cc150 !== 0 || c2.cc300 !== 0 || c2.total !== 0) {
-              list.push(c2);
-            }
-            list.push(total);
-            console.log(list);
-            setCounts(list);
-          }
-        });
-    }
-    initialize();
+    initializeModal(id);
     setVisible(true);
   };
 
@@ -180,7 +182,7 @@ export default function ListScreen(): JSX.Element {
                     fontSize: 18,
                   }}
                   onPress={() => {
-                    onPressModalButton(item);
+                    onPressModalButton(item.id.toString(), item.name);
                   }}
                   onLongPress={() =>
                     // navigation.navigate('Detile', {item: item, AUD: AUD.upd})
@@ -201,8 +203,11 @@ export default function ListScreen(): JSX.Element {
                 icon="pencil"
                 iconColor={MD3Colors.secondary50}
                 size={20}
-                // onPress={() => navigation.navigate('Count', {sid: sid})}
-                onPress={() => navigation.navigate('Count', {sid: sid})}
+                onPress={() => {
+                  setVisible(false);
+                  navigation.navigate('Count', {sid: sid});
+                  // setVisible(false);
+                }}
                 style={styles.iconstyle}
                 mode={'contained-tonal'}
               />
@@ -216,7 +221,7 @@ export default function ListScreen(): JSX.Element {
                 <DataTable.Title numeric>150cc</DataTable.Title>
                 <DataTable.Title numeric>300cc</DataTable.Title>
                 <DataTable.Title numeric>ポット</DataTable.Title>
-                <DataTable.Title numeric>小計</DataTable.Title>
+                <DataTable.Title numeric>合計</DataTable.Title>
               </DataTable.Header>
               {counts.map(item => (
                 <DataTable.Row>
