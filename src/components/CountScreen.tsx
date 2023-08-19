@@ -1,3 +1,4 @@
+import React from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {
   PaperProvider,
@@ -9,9 +10,10 @@ import {
 } from 'react-native-paper';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import CountView from './CountView';
-import {Count} from '../Count';
 import {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
+import {Count} from '../Count';
+import {AllTotal} from '../AllTotal';
 
 export default function CountScreen(): JSX.Element {
   const navigation = useNavigation();
@@ -26,7 +28,9 @@ export default function CountScreen(): JSX.Element {
     key: '',
     total: 0,
   });
-  // const [selected, setSelected] = useState<Count>();
+  const [alltotal, setAllTotal] = useState<AllTotal>({
+    alltotal: 0,
+  });
 
   const onPressSave = () => {
     navigation.goBack();
@@ -41,49 +45,52 @@ export default function CountScreen(): JSX.Element {
 
   useEffect(() => {
     console.log('useEffect');
+    // counts.forEach(c => {
+    //   al += c.total;
+    // });
+    // setAllTotal(al);
 
     const initialize = async () => {
       let c: Count;
       let list: Array<Count> = [];
-      // let nendo = new Date().getFullYear() - 2;
-      // let keynendo: number;
-      console.log('sid = ' + route.params.sid);
-      let sid = route.params.sid;
-      console.log('sid = ' + sid);
+      let al: AllTotal = {alltotal: 0};
+
       console.log('initialize');
       await firestore()
         .collection('naegi')
-        .doc(sid.toString())
+        .doc(route.params.sid.toString())
         .collection('count')
         .get()
         .then(docs => {
-          if (docs.empty === false) {
+          if (!docs.empty) {
             docs.forEach(doc => {
               c = Object.assign(doc.data());
               c.key = doc.id;
               c.total = p(c.cc150) + p(c.cc300) + p(c.pot);
+              al.alltotal += c.total;
               console.log('a' + parseInt(c.key, 10));
               list.push(c);
             });
             console.log(list);
-            setCounts(list);
+            // TODO reverse()ちょっと微妙。たまたまうまくいってるだけ。
+            setCounts(list.reverse());
             setSelected(list[0]);
-            console.log('counts = ' + counts);
-            console.log('selected = ' + selected);
-            console.log('slice = ' + counts.slice(0, 1)[0]);
-            console.log('[] = ' + counts[0]);
-            console.log('at = ' + counts.at(0));
-            console.log('list[0] = ' + list[0]);
+            setAllTotal(al);
           }
         });
     };
     const unsubscribe = navigation.addListener('focus', initialize);
     return unsubscribe;
-  }, [counts, navigation, selected]);
+  }, [counts, navigation, route.params.sid, selected]);
+
+  const onPress = (item: Count) => {
+    setSelected(item);
+    // console.log('OnPress = ' + item.c40);
+  };
 
   return (
     <PaperProvider>
-      <CountView item={selected} />
+      <CountView item={selected} alltotal={alltotal} />
       <View>
         <FlatList
           // style={styles.list}
@@ -96,8 +103,10 @@ export default function CountScreen(): JSX.Element {
                   title={item.key}
                   titleStyle={styles.memoTitle}
                   style={styles.list}
+                  onPress={() => {
+                    onPress(item);
+                  }}
                 />
-                {/* <Text>{item.key}</Text> */}
               </View>
             );
           }}
@@ -140,6 +149,10 @@ const styles = StyleSheet.create({
   cardcon: {
     marginBottom: 5,
     marginRight: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  total: {
     flexDirection: 'row',
     alignItems: 'center',
   },

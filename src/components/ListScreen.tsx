@@ -143,6 +143,8 @@ export default function ListScreen(): JSX.Element {
                 c2.total = p(c.total) + p(c2.total);
               }
             });
+            // TODO たまたまうまくいってるだけ、本当はfirestoreにorderbyさせる
+            list.reverse();
             if (c2.cc150 !== 0 || c2.cc300 !== 0 || c2.total !== 0) {
               list.push(c2);
             }

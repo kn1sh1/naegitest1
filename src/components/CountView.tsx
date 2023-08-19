@@ -5,22 +5,57 @@ import {
   Divider,
   Button,
   Card,
+  IconButton,
+  MD3Colors,
 } from 'react-native-paper';
 import React, {useEffect, useState} from 'react';
 import {Count} from '../Count';
+import {AllTotal} from '../AllTotal';
 
 const CountView: React.FunctionComponent<{
   item: Count;
-}> = ({item}) => {
-  const [allTotal, setAllTotal] = useState(0);
-//   const [cc150, setCc150] = useState();
-//   const [cc300, setCc150] = useState();
-//   const [c24, setC24] = useState();
-//   const [c40, setC40] = useState();
-//   const [pot, setPot] = useState();
-//   useEffect(() => {
+  alltotal: AllTotal;
+}> = ({item, alltotal}) => {
+  const [cc150, setCc150] = useState('');
+  const [cc300, setCc300] = useState('');
+  const [c24, setC24] = useState('');
+  const [c40, setC40] = useState('');
+  const [pot, setPot] = useState('');
+  const [total, setTotal] = useState(0);
+  const [pretotal, setPreTotal] = useState(0);
+//   const [at, setAt] = useState(0);
 
-//   }, []);
+  useEffect(() => {
+    console.log('useEffect2');
+    setPreTotal(item.total);
+    setCc150(item.cc150.toString());
+    setCc300(item.cc300.toString());
+    setC24(item.c24.toString());
+    setC40(item.c40.toString());
+    setPot(item.pot.toString());
+    let t =
+      parseInt(item.cc150.toString(), 10) +
+      parseInt(item.cc300.toString(), 10) +
+      parseInt(item.pot.toString(), 10);
+    setTotal(t);
+    item.total = t;
+    if (pretotal !== total) {
+      let diff = total - pretotal;
+      alltotal.alltotal += diff;
+    }
+  }, [
+    item.c24,
+    item.c40,
+    item.cc150,
+    item.cc300,
+    item.pot,
+    alltotal.alltotal,
+    total,
+    pretotal,
+    alltotal,
+    item.total,
+    item,
+  ]);
 
   return (
     <PaperProvider>
@@ -28,11 +63,31 @@ const CountView: React.FunctionComponent<{
       <View style={styles.cardcon}>
         <TextInput
           style={{paddingLeft: 0, width: 100}}
+          keyboardType="number-pad"
           label="ポット"
           maxLength={5}
           inputMode="numeric"
-          value={item.pot.toString()}
-          onChangeText={text => (item.pot = parseInt(text, 10))}
+          value={pot.toString()}
+          onChangeText={text => {
+            let t = text;
+            if (Number.isNaN(parseInt(text, 10))) {
+              t = '0';
+            }
+            setPot(t);
+            // TODO なぜitemだけで処理できないのか？useStateが関係ある？
+            item.pot = parseInt(t, 10);
+          }}
+          onFocus={() => {
+            // TODO あんまりコロコロ値変えるのはバグの元やね・・・
+            // setPrepot(pot);
+          }}
+          onEndEditing={() => {
+            // let diff = parseInt(pot, 10) - parseInt(prepot, 10);
+            // item.total += diff;
+            // setTotal(total + diff);
+            // allTotal.alltotal += diff;
+            // console.log('allTotal = ' + allTotal.alltotal);
+          }}
         />
         <Text>株</Text>
       </View>
@@ -40,20 +95,68 @@ const CountView: React.FunctionComponent<{
         <Text>40穴</Text>
         <TextInput
           style={{paddingLeft: 0, width: 100}}
+          keyboardType="number-pad"
           label="コンテナ"
           maxLength={5}
           inputMode="numeric"
-          value={item.c40.toString()}
-          onChangeText={text => (item.c40 = parseInt(text, 10))}
+          value={c40}
+          onChangeText={text => {
+            let t = text;
+            if (Number.isNaN(parseInt(text, 10))) {
+              t = '0';
+            }
+            setC40(t);
+            // TODO なぜitemだけで処理できないのか？useStateが関係ある？
+            item.c40 = parseInt(t, 10);
+          }}
+          onFocus={() => {
+            console.log('Focus');
+            // TODO あんまりコロコロ値変えるのはバグの元やね・・・
+            // setPrec40(c40);
+          }}
+          onEndEditing={() => {
+            console.log('EndEdit');
+            // let diff = (parseInt(c40, 10) - parseInt(prec40, 10)) * 40;
+            // setCc150((parseInt(cc150, 10) + diff).toString());
+          }}
         />
-        <Text>=</Text>
+        <IconButton
+          icon="equal"
+          iconColor={MD3Colors.secondary50}
+          size={20}
+          mode={'contained-tonal'}
+          onPress={() => {
+            let mul40 = item.c40 * 40;
+            setCc150(mul40.toString());
+            item.cc150 = mul40;
+          }}
+        />
         <TextInput
           style={{paddingLeft: 0, width: 100}}
+          keyboardType="number-pad"
           label="150cc"
           maxLength={5}
           inputMode="numeric"
-          value={item.cc150.toString()}
-          onChangeText={text => (item.cc150 = parseInt(text, 10))}
+          value={cc150}
+          onChangeText={text => {
+            let t = text;
+            if (Number.isNaN(parseInt(text, 10))) {
+              t = '0';
+            }
+            setCc150(t);
+            // TODO なぜitemだけで処理できないのか？useStateが関係ある？
+            item.cc150 = parseInt(t, 10);
+          }}
+          onFocus={() => {
+            // TODO あんまりコロコロ値変えるのはバグの元やね・・・
+            // setPrec40(c40);
+            // setPrecc150(cc150);
+          }}
+          onEndEditing={() => {
+            // let diff = parseInt(cc150, 10) - parseInt(precc150, 10);
+            // item.total = item.total + diff;
+            // setTotal(total + diff);
+          }}
         />
         <Text>株</Text>
       </View>
@@ -61,26 +164,79 @@ const CountView: React.FunctionComponent<{
         <Text>24穴</Text>
         <TextInput
           style={{paddingLeft: 0, width: 100}}
+          keyboardType="number-pad"
           label="コンテナ"
           maxLength={5}
           inputMode="numeric"
-          value={item.c24.toString()}
-          onChangeText={text => (item.c24 = parseInt(text, 10))}
+          value={c24}
+          onChangeText={text => {
+            let t = text;
+            if (Number.isNaN(parseInt(text, 10))) {
+              t = '0';
+            }
+            setC24(t);
+            // TODO なぜitemだけで処理できないのか？useStateが関係ある？
+            item.c24 = parseInt(t, 10);
+          }}
         />
-        <Text>=</Text>
+        <IconButton
+          icon="equal"
+          iconColor={MD3Colors.secondary50}
+          size={20}
+          mode={'contained-tonal'}
+          onPress={() => {
+            let mul24 = item.c24 * 24;
+            setCc300(mul24.toString());
+            item.cc300 = mul24;
+          }}
+        />
         <TextInput
           style={{paddingLeft: 0, width: 100}}
+          keyboardType="number-pad"
           label="300cc"
           maxLength={5}
           inputMode="numeric"
-          value={item.cc300.toString()}
-          onChangeText={text => (item.cc300 = parseInt(text, 10))}
+          value={cc300}
+          onChangeText={text => {
+            let t = text;
+            if (Number.isNaN(parseInt(text, 10))) {
+              t = '0';
+            }
+            setCc300(t);
+            item.cc300 = parseInt(t, 10);
+          }}
+          onFocus={() => {
+            // TODO あんまりコロコロ値変えるのはバグの元やね・・・
+            // setPrec40(c40);
+            // setPrecc300(cc300);
+          }}
+          onEndEditing={() => {
+            // let diff = parseInt(cc300, 10) - parseInt(precc300, 10);
+            // item.total = item.total + diff;
+            // setTotal(total + diff);
+          }}
         />
         <Text>株</Text>
       </View>
       <Divider />
-      <Text>合計</Text>
-      <Text>3000株</Text>
+      <View style={styles.total}>
+        <Text>合計</Text>
+        <Text>{total}</Text>
+        <Text>株</Text>
+      </View>
+      <View style={styles.total}>
+        <Text>総計</Text>
+        <Text>{alltotal.alltotal}</Text>
+        <Text>株</Text>
+      </View>
+      <Divider />
+
+      <Divider />
+      {/* <View style={styles.total}>
+        <Text>総計</Text>
+        <Text>{allTotal}</Text>
+        <Text>株</Text>
+      </View> */}
     </PaperProvider>
   );
 };
@@ -91,7 +247,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   title: {
-    fontSize: 32,
+    // fontSize: 32,
   },
   label: {
     fontSize: 18,
@@ -113,8 +269,13 @@ const styles = StyleSheet.create({
     // paddingRight: 15,
   },
   cardcon: {
-    marginBottom: 5,
-    marginRight: 5,
+    // marginBottom: 5,
+    // marginRight: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  total: {
     flexDirection: 'row',
     alignItems: 'center',
   },
