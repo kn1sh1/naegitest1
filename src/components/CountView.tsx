@@ -38,6 +38,7 @@ const CountView: React.FunctionComponent<{
       parseInt(item.pot.toString(), 10);
     setTotal(t);
     item.total = t;
+
     if (pretotal !== total) {
       let diff = total - pretotal;
       alltotal.alltotal += diff;

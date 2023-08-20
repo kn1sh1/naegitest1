@@ -23,12 +23,11 @@ export default function ListScreen(): JSX.Element {
   const [counts, setCounts] = useState(Array<Count>);
   // useIsFocused();
   const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
+  // const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
   // TODO selectedIDandName あとでいい方法考える
   const [sid, setSid] = useState(0);
   const [sname, setSname] = useState('');
-
   useEffect(() => {
     console.log('ListScreen useEffect');
 
@@ -64,10 +63,13 @@ export default function ListScreen(): JSX.Element {
     navigation.navigate('Detile', {item: item, AUD: AUD.upd});
   };
 
+  // TODO 本当はこんなファンクション作りたくない・・・
+  // TODO parseIntしたくない
+  // TODO この書き方嘘やろ・・
   function p(b: number): number {
     return parseInt(b.toString(), 10);
   }
-
+  // console.log('sid = ' + sid);
   async function initializeModal(id: string) {
     console.log('count initialize');
     let c: Count;
@@ -152,10 +154,6 @@ export default function ListScreen(): JSX.Element {
     setSid(parseInt(id, 10));
     setSname(name);
 
-    // TODO 本当はこんなファンクション作りたくない・・・
-    // TODO parseIntしたくない
-    // TODO この書き方嘘やろ・・
-
     initializeModal(id);
     setVisible(true);
   };
@@ -204,9 +202,9 @@ export default function ListScreen(): JSX.Element {
                 iconColor={MD3Colors.secondary50}
                 size={20}
                 onPress={() => {
-                  setVisible(false);
-                  navigation.navigate('Count', {sid: sid});
-                  // setVisible(false);
+                  // 件数更新後はモーダルを閉じるためhideModalを渡す。
+                  // TODO 更新後モーダルを閉じるのはモーダルが更新後の値を反映するのが面倒だったため、、、
+                  navigation.navigate('Count', {sid: sid, hide: hideModal});
                 }}
                 style={styles.iconstyle}
                 mode={'contained-tonal'}

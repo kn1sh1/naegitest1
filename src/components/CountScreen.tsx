@@ -42,6 +42,9 @@ export default function CountScreen(): JSX.Element {
     counts.forEach(c => {
       updCount(c);
     });
+    // route.params.sid = 1000;
+    // console.log('cs sid = ' + route.params.sid);
+    route.params.hide();
     navigation.goBack();
   };
 
@@ -85,10 +88,6 @@ export default function CountScreen(): JSX.Element {
 
   useEffect(() => {
     console.log('useEffect');
-    // counts.forEach(c => {
-    //   al += c.total;
-    // });
-    // setAllTotal(al);
 
     const initialize = async () => {
       let c: Count;
