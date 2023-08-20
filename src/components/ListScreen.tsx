@@ -59,8 +59,10 @@ export default function ListScreen(): JSX.Element {
     navigation.navigate('Detile', {AUD: AUD.add});
   };
 
-  const showDetileSc = (item: Naegi) => {
-    navigation.navigate('Detile', {item: item, AUD: AUD.upd});
+  // const showDetileSc = (item: Naegi) => {
+  const showDetileSc = (id: number) => {
+    // navigation.navigate('Detile', {item: item, AUD: AUD.upd});
+    navigation.navigate('Detile', {id: id, AUD: AUD.upd});
   };
 
   // TODO 本当はこんなファンクション作りたくない・・・
@@ -184,7 +186,7 @@ export default function ListScreen(): JSX.Element {
                   }}
                   onLongPress={() =>
                     // navigation.navigate('Detile', {item: item, AUD: AUD.upd})
-                    showDetileSc(item)
+                    showDetileSc(item.id)
                   }
                 />
               </View>
