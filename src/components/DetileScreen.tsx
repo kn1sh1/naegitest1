@@ -162,7 +162,7 @@ export default function DetileScreen(): JSX.Element {
     <PaperProvider>
       <KeyboardAvoidingView style={styles.container}>
         <TextInput
-          style={{marginBottom: 16}}
+          style={{marginBottom: 3, height: 50}}
           // placeholder="樹種名"
           label="樹種名"
           onChangeText={text => setName(text)}
@@ -178,7 +178,10 @@ export default function DetileScreen(): JSX.Element {
                 label: 'About',
                 // icon: 'information',
                 // icon: 'book-information-variant',
-                icon: 'folder-information',
+                // icon: 'folder-information',
+                // icon: 'script-text',
+                icon: 'file-document-edit',
+
               },
               {
                 value: 'seed',
@@ -188,8 +191,10 @@ export default function DetileScreen(): JSX.Element {
               {
                 value: 'rising',
                 label: '育苗',
-                icon: 'pot-mix',
+                icon: 'flower',
+                // icon: 'pot-mix',
                 // icon: 'leaf',
+                // icon: 'seedling',
               },
               {
                 value: 'plant',
@@ -295,15 +300,16 @@ export default function DetileScreen(): JSX.Element {
             <Text>種画面</Text>
             <Text>開花期</Text>
             <Text>結実期</Text>
-            <View style={{flexDirection: 'row'}}>
+            <View style={styles.rowview}>
               {/* <View> */}
               <TextInput
                 label="開花"
                 value={kaikaf}
                 onChangeText={text => setKaikaf(text)}
-                style={{width: 65, textAlign: 'center'}}
+                style={{width: 65, textAlign: 'center', height: 50}}
                 maxLength={2}
               />
+              <Text>月〜</Text>
               {/* <HelperText type="error" visible={hasMonthErrors(kaikaf)}>
                   1~12の間で入力してください。
                 </HelperText> */}
@@ -313,9 +319,10 @@ export default function DetileScreen(): JSX.Element {
                 label="開花"
                 value={kaikat}
                 onChangeText={text => setKaikat(text)}
-                style={{width: 65, textAlign: 'center'}}
+                style={{width: 65, textAlign: 'center', height: 50}}
                 maxLength={2}
               />
+              <Text>月</Text>
               {/* <HelperText type="error" visible={hasMonthErrors(kaikat)}>
                   1~12の間で入力してください。
                 </HelperText> */}
@@ -324,9 +331,10 @@ export default function DetileScreen(): JSX.Element {
                 label="結実"
                 value={ketsujituf}
                 onChangeText={text => setKetsujituf(text)}
-                style={{width: 65, textAlign: 'center'}}
+                style={{width: 65, textAlign: 'center', height: 50}}
                 maxLength={2}
               />
+              <Text>月〜</Text>
               {/* <HelperText type="error" visible={hasMonthErrors(kaikaf)}>
                   1~12の間で入力してください。
                 </HelperText> */}
@@ -336,9 +344,10 @@ export default function DetileScreen(): JSX.Element {
                 label="結実"
                 value={ketsujitut}
                 onChangeText={text => setKetsujitut(text)}
-                style={{width: 65, textAlign: 'center'}}
+                style={{width: 65, textAlign: 'center', height: 50}}
                 maxLength={2}
               />
+              <Text>月</Text>
               {/* <HelperText type="error" visible={hasMonthErrors(kaikat)}>
                   1~12の間で入力してください。
                 </HelperText> */}
@@ -350,8 +359,13 @@ export default function DetileScreen(): JSX.Element {
                 onValueChange={v => setHanshoku(v)}
                 value={hanshoku}>
                 <View style={styles.rowview}>
-                  <RadioButton.Item label="実生" value="1" />
-                  <RadioButton.Item label="挿木" value="2" />
+                  <RadioButton.Item
+                    label="実生"
+                    value="1"
+                    position="leading"
+                    status="unchecked"
+                  />
+                  <RadioButton.Item label="挿木" value="2" position='leading'/>
                 </View>
               </RadioButton.Group>
             </View>
