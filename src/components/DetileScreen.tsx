@@ -22,7 +22,8 @@ import {Naegi} from '../Naegi';
 export default function DetileScreen(): JSX.Element {
   const navigation = useNavigation();
   const route = useRoute();
-  const isAdd = route.params.AUD === AUD.add;
+  const aud = route.params.AUD;
+  const isAdd = aud === AUD.add;
   const id = route.params.id;
 
   const onPressSave = () => {
@@ -196,117 +197,52 @@ export default function DetileScreen(): JSX.Element {
         plantmemo: '',
       };
 
-      let doc = await firestore().collection('naegi').doc(id.toString()).get();
-      if (doc.exists) {
-        console.log('doc = ' + doc.data());
-        n = Object.assign(doc.data());
-        setName(n.name);
-        setKa(n.ka);
-        setZoku(n.zoku);
-        setShiyuui(n.shiyuui);
-        setJiseishu(n.jiseishu);
-        setRakujo(n.rakujo);
-        setShinkou(n.shinkou);
-        setSeityou(n.seityou);
-        setIshoku(n.ishoku);
-        setYouto(n.youto);
+      if (aud !== AUD.add) {
+        let doc = await firestore().collection('naegi').doc(id.toString()).get();
+        if (doc.exists) {
+          console.log('doc = ' + doc.data());
+          n = Object.assign(doc.data());
+          setName(n.name);
+          setKa(n.ka);
+          setZoku(n.zoku);
+          setShiyuui(n.shiyuui);
+          setJiseishu(n.jiseishu);
+          setRakujo(n.rakujo);
+          setShinkou(n.shinkou);
+          setSeityou(n.seityou);
+          setIshoku(n.ishoku);
+          setYouto(n.youto);
 
-        setKaikaf(n.kaikaf);
-        setKaikat(n.kaikat);
-        setKetsujituf(n.ketsujituf);
-        setKetsujitut(n.ketsujitut);
-        setHanshoku(n.hanshoku);
-        setNe(n.ne);
-        setSeedmemo(n.seedmemo);
+          setKaikaf(n.kaikaf);
+          setKaikat(n.kaikat);
+          setKetsujituf(n.ketsujituf);
+          setKetsujitut(n.ketsujitut);
+          setHanshoku(n.hanshoku);
+          setNe(n.ne);
+          setSeedmemo(n.seedmemo);
 
-        setNikkou(n.nikkou);
-        setMizuyari(n.mizuyari);
-        setKansou(n.kansou);
-        setShikke(n.shikke);
-        setSamusa(n.samusa);
-        setAtsusa(n.atsusa);
-        setRisingmemo(n.risingmemo);
+          setNikkou(n.nikkou);
+          setMizuyari(n.mizuyari);
+          setKansou(n.kansou);
+          setShikke(n.shikke);
+          setSamusa(n.samusa);
+          setAtsusa(n.atsusa);
+          setRisingmemo(n.risingmemo);
 
-        setYouin(n.youin);
-        setHeight(n.height);
-        setKikou(n.kikou);
-        setSeisoku(n.seisoku);
-        setHyoukouf(n.hyoukouf);
-        setHyoukout(n.hyoukout);
-        setPlantmemo(n.plantmemo);
+          setYouin(n.youin);
+          setHeight(n.height);
+          setKikou(n.kikou);
+          setSeisoku(n.seisoku);
+          setHyoukouf(n.hyoukouf);
+          setHyoukout(n.hyoukout);
+          setPlantmemo(n.plantmemo);
+        }
       }
-        // .then(doc => {
-        //   if (doc.exists) {
-        //     n = Object.assign(doc.data());
-        //     setName(n.name);
-        //     setKa(n.ka);
-        //     setZoku(n.zoku);
-        //     setShiyuui(n.shiyuui);
-        //     setJiseishu(n.jiseishu);
-        //     setRakujo(n.rakujo);
-        //     setShinkou(n.shinkou);
-        //     setSeityou(n.seityou);
-        //     setIshoku(n.ishoku);
-        //     setYouto(n.youto);
-
-        //     setKaikaf(n.kaikaf);
-        //     setKaikat(n.kaikat);
-        //     setKetsujituf(n.ketsujituf);
-        //     setKetsujitut(n.ketsujitut);
-        //     setHanshoku(n.hanshoku);
-        //     setNe(n.ne);
-        //     setSeedmemo(n.seedmemo);
-
-        //     setNikkou(n.nikkou);
-        //     setMizuyari(n.mizuyari);
-        //     setKansou(n.kansou);
-        //     setShikke(n.shikke);
-        //     setSamusa(n.samusa);
-        //     setAtsusa(n.atsusa);
-        //     setRisingmemo(n.risingmemo);
-
-        //     setYouin(n.youin);
-        //     setHeight(n.height);
-        //     setKikou(n.kikou);
-        //     setSeisoku(n.seisoku);
-        //     setHyoukouf(n.hyoukouf);
-        //     setHyoukout(n.hyoukout);
-        //     setPlantmemo(n.plantmemo);
-        //   }
-        // });
     };
-    // const initialize = async () => {
-    //   let c: Count;
-    //   let list: Array<Count> = [];
-    //   let al: AllTotal = {alltotal: 0};
 
-    //   console.log('initialize');
-    //   await firestore()
-    //     .collection('naegi')
-    //     .doc(route.params.sid.toString())
-    //     .collection('count')
-    //     .get()
-    //     .then(docs => {
-    //       if (!docs.empty) {
-    //         docs.forEach(doc => {
-    //           c = Object.assign(doc.data());
-    //           c.key = doc.id;
-    //           c.total = p(c.cc150) + p(c.cc300) + p(c.pot);
-    //           al.alltotal += c.total;
-    //           console.log('a' + parseInt(c.key, 10));
-    //           list.push(c);
-    //         });
-    //         console.log(list);
-    //         // TODO reverse()ちょっと微妙。たまたまうまくいってるだけ。
-    //         setCounts(list.reverse());
-    //         setSelected(list[0]);
-    //         setAllTotal(al);
-    //       }
-    //     });
-    // };
     const unsubscribe = navigation.addListener('focus', initialize);
     return unsubscribe;
-  }, [id, navigation]);
+  }, [aud, id, navigation]);
 
   // TODO アイデア
   // 育苗
