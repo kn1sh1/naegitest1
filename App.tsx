@@ -13,6 +13,8 @@ import {PaperProvider} from 'react-native-paper';
 import ListScreen from './src/components/ListScreen';
 import DetailScreen from './src/components/DetileScreen';
 import CountScreen from './src/components/CountScreen';
+import MemoListScreen from './src/components/MemoListScreen';
+import MemoEditScreen from './src/components/MemoEditScreen';
 
 const Stack = createStackNavigator();
 
@@ -25,7 +27,7 @@ export default function App(): JSX.Element {
             name="List"
             component={ListScreen}
             options={{
-              title: '一覧',
+              title: '',
             }}
           />
           <Stack.Screen
@@ -38,6 +40,20 @@ export default function App(): JSX.Element {
           <Stack.Screen
             name="Count"
             component={CountScreen}
+            options={{
+              title: '',
+            }}
+          />
+          <Stack.Screen
+            name="MemoList"
+            component={MemoListScreen}
+            options={{
+              title: '',
+            }}
+          />
+          <Stack.Screen
+            name="MemoEdit"
+            component={MemoEditScreen}
             options={{
               title: '',
             }}

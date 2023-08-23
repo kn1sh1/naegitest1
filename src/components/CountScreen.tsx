@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   List,
+  FAB,
 } from 'react-native-paper';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import CountView from './CountView';
@@ -18,6 +19,11 @@ import {AllTotal} from '../AllTotal';
 export default function CountScreen(): JSX.Element {
   const navigation = useNavigation();
   const route = useRoute();
+  const sid = route.params.sid.toString();
+  // const hideModal = () = {
+  //    route.params.hide();
+  // };
+
   const [counts, setCounts] = useState(Array<Count>);
   const [selected, setSelected] = useState<Count>({
     cc150: 0,
@@ -51,7 +57,7 @@ export default function CountScreen(): JSX.Element {
   async function updAllTotal() {
     await firestore()
       .collection('naegi')
-      .doc(route.params.sid.toString())
+      .doc(sid)
       .update({
         count: alltotal.alltotal,
       })
@@ -64,7 +70,7 @@ export default function CountScreen(): JSX.Element {
     console.log('c is ' + c.key);
     await firestore()
       .collection('naegi')
-      .doc(route.params.sid.toString())
+      .doc(sid)
       .collection('count')
       .doc(c.key)
       .update({
@@ -97,7 +103,7 @@ export default function CountScreen(): JSX.Element {
       console.log('initialize');
       await firestore()
         .collection('naegi')
-        .doc(route.params.sid.toString())
+        .doc(sid)
         .collection('count')
         .get()
         .then(docs => {
@@ -120,7 +126,7 @@ export default function CountScreen(): JSX.Element {
     };
     const unsubscribe = navigation.addListener('focus', initialize);
     return unsubscribe;
-  }, [counts, navigation, route.params.sid, selected]);
+  }, [counts, navigation, sid, selected]);
 
   const onPress = (item: Count) => {
     setSelected(item);
@@ -137,11 +143,11 @@ export default function CountScreen(): JSX.Element {
           keyExtractor={item => `${item.key}`}
           renderItem={({item}) => {
             return (
-              <View>
+              <View style={styles.memoContainer}>
                 <List.Item
                   title={item.key}
-                  titleStyle={styles.memoTitle}
-                  style={styles.list}
+                  titleStyle={{fontSize: 32}}
+                  // style={styles.list}
                   onPress={() => {
                     onPress(item);
                   }}
@@ -151,9 +157,18 @@ export default function CountScreen(): JSX.Element {
           }}
         />
       </View>
-      <Button icon="check" mode="text" onPress={onPressSave}>
+      {/* <Button icon="check" mode="text" onPress={onPressSave}>
         登録
-      </Button>
+      </Button> */}
+      <FAB
+        style={{
+          position: 'absolute',
+          right: 16,
+          bottom: 16,
+        }}
+        label="更新"
+        onPress={onPressSave}
+      />
     </PaperProvider>
   );
 }
@@ -170,9 +185,8 @@ const styles = StyleSheet.create({
     fontSize: 30,
     marginRight: 5,
   },
-  list: {
-    flex: 1,
-  },
+  // list: {
+  // },
   card: {
     // marginBottom: 15,
     // marginTop: 15,
@@ -194,5 +208,11 @@ const styles = StyleSheet.create({
   total: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  memoContainer: {
+    marginTop: 0,
+    paddingBottom: 0,
+    borderBottomWidth: 1,
+    justifyContent: 'center',
   },
 });

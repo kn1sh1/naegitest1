@@ -7,8 +7,8 @@ export type Naegi = {
   zoku: string;
   shiyuui: boolean;
   jiseishu: boolean;
-  rakujo: number;
-  shinkou: number;
+  rakuyou: boolean;
+  kouyou: boolean;
   seityou: number;
   ishoku: number;
   youto: string;

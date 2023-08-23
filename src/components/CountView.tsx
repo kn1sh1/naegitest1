@@ -26,12 +26,15 @@ const CountView: React.FunctionComponent<{
 
   useEffect(() => {
     console.log('useEffect2');
-    setPreTotal(item.total);
+    // TODO ここ本当はinitの場合のみ必要？
+    // TODO navigatorがないため、focusされた時だけ呼ぶとかが無理で、どうすべきかまた調べる
     setCc150(item.cc150.toString());
     setCc300(item.cc300.toString());
     setC24(item.c24.toString());
     setC40(item.c40.toString());
     setPot(item.pot.toString());
+
+    setPreTotal(item.total);
     let t =
       parseInt(item.cc150.toString(), 10) +
       parseInt(item.cc300.toString(), 10) +

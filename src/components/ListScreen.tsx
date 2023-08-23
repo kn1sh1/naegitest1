@@ -162,7 +162,7 @@ export default function ListScreen(): JSX.Element {
 
   return (
     <PaperProvider>
-      <Searchbar placeholder="検索" mode="view" />
+      <Searchbar placeholder="検索" mode="view" value={''} />
       <View style={styles.container}>
         <FlatList
           style={styles.list}

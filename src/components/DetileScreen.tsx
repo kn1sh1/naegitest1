@@ -13,6 +13,8 @@ import {
   PaperProvider,
   Divider,
   HelperText,
+  FAB,
+  IconButton,
 } from 'react-native-paper';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
@@ -27,6 +29,8 @@ export default function DetileScreen(): JSX.Element {
   const id = route.params.id;
 
   const onPressSave = () => {
+    setSavebutton(false);
+
     if (isAdd) {
       const getNewNaegiId = async (): Promise<number> => {
         let db = firestore().collection('naegi');
@@ -45,8 +49,8 @@ export default function DetileScreen(): JSX.Element {
             zoku: zoku,
             shiyuui: shiyuui,
             jiseishu: jiseishu,
-            rakujo: rakujo,
-            shinkou: shinkou,
+            rakuyou: rakuyou,
+            kouyou: kouyou,
             seityou: seityou,
             ishoku: ishoku,
             youto: youto,
@@ -117,8 +121,8 @@ export default function DetileScreen(): JSX.Element {
           zoku: zoku,
           shiyuui: shiyuui,
           jiseishu: jiseishu,
-          rakujo: rakujo,
-          shinkou: shinkou,
+          rakuyou: rakuyou,
+          kouyou: kouyou,
           seityou: seityou,
           ishoku: ishoku,
           youto: youto,
@@ -169,8 +173,8 @@ export default function DetileScreen(): JSX.Element {
         zoku: '',
         shiyuui: false,
         jiseishu: false,
-        rakujo: 0,
-        shinkou: 0,
+        rakuyou: false,
+        kouyou: false,
         seityou: 0,
         ishoku: 0,
         youto: '',
@@ -198,17 +202,19 @@ export default function DetileScreen(): JSX.Element {
       };
 
       if (aud !== AUD.add) {
-        let doc = await firestore().collection('naegi').doc(id.toString()).get();
+        let doc = await firestore()
+          .collection('naegi')
+          .doc(id.toString())
+          .get();
         if (doc.exists) {
-          console.log('doc = ' + doc.data());
           n = Object.assign(doc.data());
           setName(n.name);
           setKa(n.ka);
           setZoku(n.zoku);
           setShiyuui(n.shiyuui);
           setJiseishu(n.jiseishu);
-          setRakujo(n.rakujo);
-          setShinkou(n.shinkou);
+          setRakuyou(n.rakuyou);
+          setKouyou(n.kouyou);
           setSeityou(n.seityou);
           setIshoku(n.ishoku);
           setYouto(n.youto);
@@ -256,8 +262,8 @@ export default function DetileScreen(): JSX.Element {
   const [zoku, setZoku] = useState('');
   const [shiyuui, setShiyuui] = useState(true);
   const [jiseishu, setJiseishu] = useState(true);
-  const [rakujo, setRakujo] = useState(1);
-  const [shinkou, setShinkou] = useState(1);
+  const [rakuyou, setRakuyou] = useState(true);
+  const [kouyou, setKouyou] = useState(true);
   const [seityou, setSeityou] = useState(3);
   const [ishoku, setIshoku] = useState(3);
   const [youto, setYouto] = useState('');
@@ -289,6 +295,7 @@ export default function DetileScreen(): JSX.Element {
   // const [, set] = useState('');
 
   const [seg, setSeg] = useState('about');
+  const [savebutton, setSavebutton] = useState(true);
 
   const hasMonthErrors = (month: string) => {
     return !(parseInt(month, 10) >= 1 && parseInt(month, 10) <= 12);
@@ -303,6 +310,7 @@ export default function DetileScreen(): JSX.Element {
           label="樹種名"
           onChangeText={text => setName(text)}
           value={name}
+          mode={'outlined'}
         />
         <SafeAreaView style={styles.safeview}>
           <SegmentedButtons
@@ -346,6 +354,7 @@ export default function DetileScreen(): JSX.Element {
                 onChangeText={text => setKa(text)}
                 value={ka}
                 numberOfLines={5}
+                mode={'outlined'}
               />
               <TextInput
                 style={{marginBottom: 0, width: 100, height: 50}}
@@ -354,7 +363,32 @@ export default function DetileScreen(): JSX.Element {
                 value={zoku}
                 // multiline
                 numberOfLines={5}
+                mode={'outlined'}
               />
+              <View style={styles.rowview}>
+                <IconButton
+                  mode={'contained-tonal'}
+                  onPress={() => {
+                    navigation.navigate("MemoList");
+                  }}
+                  icon={'pencil'}
+                />
+              </View>
+            </View>
+            <Divider />
+            <View style={styles.rowview}>
+              <Button
+                compact
+                mode="contained-tonal"
+                onPress={() => setRakuyou(!rakuyou)}>
+                {rakuyou ? '落葉' : '常緑'}
+              </Button>
+              <Button
+                compact
+                mode="contained-tonal"
+                onPress={() => setKouyou(!kouyou)}>
+                {kouyou ? '広葉' : '針葉'}
+              </Button>
               <Button
                 compact
                 mode="contained-tonal"
@@ -369,85 +403,70 @@ export default function DetileScreen(): JSX.Element {
               </Button>
             </View>
             <Divider />
-            <View style={styles.rowview}>
-              <Button
-                mode={rakujo === 1 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setRakujo(1)}>
-                落葉
-              </Button>
-              <Button
-                mode={rakujo === 2 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setRakujo(2)}>
-                常緑
-              </Button>
-              <Button
-                mode={shinkou === 1 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setShinkou(1)}>
-                針葉
-              </Button>
-              <Button
-                mode={shinkou === 2 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setShinkou(2)}>
-                広葉
-              </Button>
-            </View>
-            <Divider />
             <Text>成長</Text>
             <View style={styles.rowview}>
-              <Button
-                mode={seityou === 1 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setSeityou(1)}>
-                早
-              </Button>
-              <Button
-                mode={seityou === 2 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setSeityou(2)}>
-                稍早
-              </Button>
-              <Button
-                mode={seityou === 3 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setSeityou(3)}>
-                普通
-              </Button>
-              <Button
-                mode={seityou === 4 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setSeityou(4)}>
-                稍遅
-              </Button>
-              <Button
-                mode={seityou === 5 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setSeityou(5)}>
-                遅
-              </Button>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (seityou > 1) {
+                    setSeityou(seityou - 1);
+                  }
+                }}
+                icon={'step-backward'}
+              />
+              <Text>
+                {seityou === 1
+                  ? '遅'
+                  : seityou === 2
+                  ? '稍遅'
+                  : seityou === 3
+                  ? '普通'
+                  : seityou === 4
+                  ? '稍早'
+                  : '早'}
+              </Text>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (seityou < 5) {
+                    setSeityou(seityou + 1);
+                  }
+                }}
+                icon={'step-forward'}
+              />
             </View>
             <Divider />
             <Text>移植</Text>
             <View style={styles.rowview}>
-              <Button
-                mode={ishoku === 1 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setIshoku(1)}>
-                早
-              </Button>
-              <Button
-                mode={ishoku === 2 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setIshoku(2)}>
-                稍早
-              </Button>
-              <Button
-                mode={ishoku === 3 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setIshoku(3)}>
-                普通
-              </Button>
-              <Button
-                mode={ishoku === 4 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setIshoku(4)}>
-                稍遅
-              </Button>
-              <Button
-                mode={ishoku === 5 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setIshoku(5)}>
-                遅
-              </Button>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (ishoku > 1) {
+                    setIshoku(ishoku - 1);
+                  }
+                }}
+                icon={'step-backward'}
+              />
+              <Text>
+                {ishoku === 1
+                  ? '難'
+                  : ishoku === 2
+                  ? '稍難'
+                  : ishoku === 3
+                  ? '普通'
+                  : ishoku === 4
+                  ? '稍易'
+                  : '易'}
+              </Text>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (ishoku < 5) {
+                    setIshoku(ishoku + 1);
+                  }
+                }}
+                icon={'step-forward'}
+              />
             </View>
             <Divider />
             <TextInput
@@ -469,6 +488,7 @@ export default function DetileScreen(): JSX.Element {
                   onChangeText={text => setKaikaf(text)}
                   style={{width: 65, textAlign: 'center', height: 50}}
                   maxLength={2}
+                  mode={'outlined'}
                 />
                 <HelperText type="error" visible={hasMonthErrors(kaikaf)}>
                   1~12月
@@ -482,6 +502,7 @@ export default function DetileScreen(): JSX.Element {
                   onChangeText={text => setKaikat(text)}
                   style={{width: 65, textAlign: 'center', height: 50}}
                   maxLength={2}
+                  mode={'outlined'}
                 />
                 <HelperText type="error" visible={hasMonthErrors(kaikat)}>
                   1~12月
@@ -495,6 +516,7 @@ export default function DetileScreen(): JSX.Element {
                   onChangeText={text => setKetsujituf(text)}
                   style={{width: 65, textAlign: 'center', height: 50}}
                   maxLength={2}
+                  mode={'outlined'}
                 />
                 <HelperText type="error" visible={hasMonthErrors(ketsujituf)}>
                   1~12月
@@ -508,6 +530,7 @@ export default function DetileScreen(): JSX.Element {
                   onChangeText={text => setKetsujitut(text)}
                   style={{width: 65, textAlign: 'center', height: 50}}
                   maxLength={2}
+                  mode={'outlined'}
                 />
                 <HelperText type="error" visible={hasMonthErrors(ketsujitut)}>
                   1~12月
@@ -569,176 +592,200 @@ export default function DetileScreen(): JSX.Element {
           <View style={seg === 'rising' ? styles.view : styles.nodisp}>
             <Text>日光強弱</Text>
             <View style={styles.rowview}>
-              <Button
-                mode={nikkou === 1 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setNikkou(1)}>
-                強
-              </Button>
-              <Button
-                mode={nikkou === 2 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setNikkou(2)}>
-                稍強
-              </Button>
-              <Button
-                mode={nikkou === 3 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setNikkou(3)}>
-                普通
-              </Button>
-              <Button
-                mode={nikkou === 4 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setNikkou(4)}>
-                稍弱
-              </Button>
-              <Button
-                mode={nikkou === 5 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setNikkou(5)}>
-                弱
-              </Button>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (nikkou > 1) {
+                    setNikkou(nikkou - 1);
+                  }
+                }}
+                icon={'step-backward'}
+              />
+              <Text>
+                {nikkou === 1
+                  ? '弱'
+                  : nikkou === 2
+                  ? '稍弱'
+                  : nikkou === 3
+                  ? '普通'
+                  : nikkou === 4
+                  ? '稍強'
+                  : '強'}
+              </Text>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (nikkou < 5) {
+                    setNikkou(nikkou + 1);
+                  }
+                }}
+                icon={'step-forward'}
+              />
             </View>
             <Divider />
             <Text>水やり</Text>
             <View style={styles.rowview}>
-              <Button
-                mode={mizuyari === 1 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setMizuyari(1)}>
-                多
-              </Button>
-              <Button
-                mode={mizuyari === 2 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setMizuyari(2)}>
-                稍多
-              </Button>
-              <Button
-                mode={mizuyari === 3 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setMizuyari(3)}>
-                普通
-              </Button>
-              <Button
-                mode={mizuyari === 4 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setMizuyari(4)}>
-                稍少
-              </Button>
-              <Button
-                mode={mizuyari === 5 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setMizuyari(5)}>
-                少
-              </Button>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (mizuyari > 1) {
+                    setMizuyari(mizuyari - 1);
+                  }
+                }}
+                icon={'step-backward'}
+              />
+              <Text>
+                {mizuyari === 1
+                  ? '少'
+                  : mizuyari === 2
+                  ? '稍少'
+                  : mizuyari === 3
+                  ? '普通'
+                  : mizuyari === 4
+                  ? '稍多'
+                  : '多'}
+              </Text>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (mizuyari < 5) {
+                    setMizuyari(mizuyari + 1);
+                  }
+                }}
+                icon={'step-forward'}
+              />
             </View>
             <Divider />
             <Text>乾燥強弱</Text>
             <View style={styles.rowview}>
-              <Button
-                mode={kansou === 1 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setKansou(1)}>
-                強
-              </Button>
-              <Button
-                mode={kansou === 2 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setKansou(2)}>
-                稍強
-              </Button>
-              <Button
-                mode={kansou === 3 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setKansou(3)}>
-                普通
-              </Button>
-              <Button
-                mode={kansou === 4 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setKansou(4)}>
-                稍弱
-              </Button>
-              <Button
-                mode={kansou === 5 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setKansou(5)}>
-                弱
-              </Button>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (kansou > 1) {
+                    setKansou(kansou - 1);
+                  }
+                }}
+                icon={'step-backward'}
+              />
+              <Text>
+                {kansou === 1
+                  ? '弱'
+                  : kansou === 2
+                  ? '稍弱'
+                  : kansou === 3
+                  ? '普通'
+                  : kansou === 4
+                  ? '稍強'
+                  : '強'}
+              </Text>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (kansou < 5) {
+                    setKansou(kansou + 1);
+                  }
+                }}
+                icon={'step-forward'}
+              />
             </View>
             <Divider />
             <Text>湿気強弱</Text>
             <View style={styles.rowview}>
-              <Button
-                mode={shikke === 1 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setShikke(1)}>
-                強
-              </Button>
-              <Button
-                mode={shikke === 2 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setShikke(2)}>
-                稍強
-              </Button>
-              <Button
-                mode={shikke === 3 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setShikke(3)}>
-                普通
-              </Button>
-              <Button
-                mode={shikke === 4 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setShikke(4)}>
-                稍弱
-              </Button>
-              <Button
-                mode={shikke === 5 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setShikke(5)}>
-                弱
-              </Button>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (shikke > 1) {
+                    setShikke(shikke - 1);
+                  }
+                }}
+                icon={'step-backward'}
+              />
+              <Text>
+                {shikke === 1
+                  ? '弱'
+                  : shikke === 2
+                  ? '稍弱'
+                  : shikke === 3
+                  ? '普通'
+                  : shikke === 4
+                  ? '稍強'
+                  : '強'}
+              </Text>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (shikke < 5) {
+                    setShikke(shikke + 1);
+                  }
+                }}
+                icon={'step-forward'}
+              />
             </View>
             <Divider />
             <Text>寒さ強弱</Text>
             <View style={styles.rowview}>
-              <Button
-                mode={samusa === 1 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setSamusa(1)}>
-                強
-              </Button>
-              <Button
-                mode={samusa === 2 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setSamusa(2)}>
-                稍強
-              </Button>
-              <Button
-                mode={samusa === 3 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setSamusa(3)}>
-                普通
-              </Button>
-              <Button
-                mode={samusa === 4 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setSamusa(4)}>
-                稍弱
-              </Button>
-              <Button
-                mode={samusa === 5 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setSamusa(5)}>
-                弱
-              </Button>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (samusa > 1) {
+                    setSamusa(samusa - 1);
+                  }
+                }}
+                icon={'step-backward'}
+              />
+              <Text>
+                {samusa === 1
+                  ? '弱'
+                  : samusa === 2
+                  ? '稍弱'
+                  : samusa === 3
+                  ? '普通'
+                  : samusa === 4
+                  ? '稍強'
+                  : '強'}
+              </Text>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (samusa < 5) {
+                    setSamusa(samusa + 1);
+                  }
+                }}
+                icon={'step-forward'}
+              />
             </View>
             <Divider />
             <Text>暑さ強弱</Text>
             <View style={styles.rowview}>
-              <Button
-                mode={atsusa === 1 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setAtsusa(1)}>
-                強
-              </Button>
-              <Button
-                mode={atsusa === 2 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setAtsusa(2)}>
-                稍強
-              </Button>
-              <Button
-                mode={atsusa === 3 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setAtsusa(3)}>
-                普通
-              </Button>
-              <Button
-                mode={atsusa === 4 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setAtsusa(4)}>
-                稍弱
-              </Button>
-              <Button
-                mode={atsusa === 5 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setAtsusa(5)}>
-                弱
-              </Button>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (atsusa > 1) {
+                    setAtsusa(atsusa - 1);
+                  }
+                }}
+                icon={'step-backward'}
+              />
+              <Text>
+                {atsusa === 1
+                  ? '弱'
+                  : atsusa === 2
+                  ? '稍弱'
+                  : atsusa === 3
+                  ? '普通'
+                  : atsusa === 4
+                  ? '稍強'
+                  : '強'}
+              </Text>
+              <IconButton
+                mode={'contained-tonal'}
+                onPress={() => {
+                  if (atsusa < 5) {
+                    setAtsusa(atsusa + 1);
+                  }
+                }}
+                icon={'step-forward'}
+              />
             </View>
             <Divider />
             <Text>育苗メモ（できれば日付で管理したい）</Text>
@@ -752,7 +799,6 @@ export default function DetileScreen(): JSX.Element {
             />
           </View>
           <View style={seg === 'plant' ? styles.view : styles.nodisp}>
-            <Text>植栽画面</Text>
             <View style={styles.rowview}>
               <Button
                 mode={youin === 1 ? 'contained-tonal' : 'elevated'}
@@ -766,7 +812,7 @@ export default function DetileScreen(): JSX.Element {
               </Button>
               <Button
                 mode={youin === 3 ? 'contained-tonal' : 'elevated'}
-                onPress={() => setYouin(1)}>
+                onPress={() => setYouin(3)}>
                 陰
               </Button>
             </View>
@@ -981,6 +1027,7 @@ export default function DetileScreen(): JSX.Element {
                 onChangeText={text => setHyoukouf(text)}
                 style={{width: 85, textAlign: 'right', height: 50}}
                 maxLength={5}
+                mode={'outlined'}
               />
               <Text>〜</Text>
               <TextInput
@@ -989,6 +1036,7 @@ export default function DetileScreen(): JSX.Element {
                 onChangeText={text => setHyoukout(text)}
                 style={{width: 85, textAlign: 'right', height: 50}}
                 maxLength={5}
+                mode={'outlined'}
               />
             </View>
             <Text>植栽記録（できれば日付で管理したい）</Text>
@@ -1002,9 +1050,23 @@ export default function DetileScreen(): JSX.Element {
             />
           </View>
         </SafeAreaView>
-        <Button icon="check" mode="text" onPress={onPressSave}>
+        {/* <Button
+          icon="check"
+          mode="text"
+          onPress={onPressSave}
+          disabled={!savebutton}>
           登録
-        </Button>
+        </Button> */}
+        <FAB
+          style={{
+            position: 'absolute',
+            right: 16,
+            bottom: 16,
+          }}
+          label={aud === AUD.add ? '登録' : aud === AUD.upd ? '更新' : '削除'}
+          onPress={onPressSave}
+          disabled={!savebutton}
+        />
       </KeyboardAvoidingView>
     </PaperProvider>
   );
